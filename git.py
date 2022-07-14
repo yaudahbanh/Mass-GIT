@@ -56,13 +56,20 @@ def scan():
 	file = open(list, 'r', encoding="utf8").read().splitlines()
 
 	for yaa in file :
-		
-		r = requests.get('{}/.git/HEAD'.format(yaa), verify=False, headers=kepala)
 
-		if r.status_code == 200 :
-			print('{}[INFO] {}{} {} -> GIT FOUND'.format(fc, fw, yaa, fg))
+		if '://' not in yaa :
+			webnya = 'http://' + yaa
 		else:
-			print('{}[INFO] {}{} {} -> NOT FOUND'.format(fc, fw, yaa, fr))
+			webnya = yaa
+		
+		r = requests.get('{}/.git/HEAD'.format(webnya), verify=False, headers=kepala)
+
+		#if r.status_code == 200 :
+			#print('{}[INFO] {}{} {} -> GIT FOUND'.format(fc, fw, webnya, fg))
+		if 'refs/heads/master' in r.text :
+			print('{}[INFO] {}{} {} -> GIT FOUND'.format(fc, fw, webnya, fg))
+		else:
+			print('{}[INFO] {}{} {} -> NOT FOUND'.format(fc, fw, webnya, fr))
 
 if __name__ == "__main__":
 	os.system('cls' if os.name == 'nt' else 'clear')
