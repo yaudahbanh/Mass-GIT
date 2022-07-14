@@ -64,8 +64,8 @@ def scan():
 		
 		r = requests.get('{}/.git/HEAD'.format(webnya), verify=False, headers=kepala)
 
-		#if r.status_code == 200 :
-			#print('{}[INFO] {}{} {} -> GIT FOUND'.format(fc, fw, webnya, fg))
+		if r.status_code == 200 :
+			print('{}[INFO] {}{} {} -> GIT FOUND'.format(fc, fw, webnya, fg))
 		if 'refs/heads/master' in r.text :
 			print('{}[INFO] {}{} {} -> GIT FOUND'.format(fc, fw, webnya, fg))
 		else:
