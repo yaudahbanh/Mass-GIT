@@ -55,21 +55,27 @@ def scan():
 
 	file = open(list, 'r', encoding="utf8").read().splitlines()
 
-	for yaa in file :
+	try:
 
-		if '://' not in yaa :
-			webnya = 'http://' + yaa
-		else:
-			webnya = yaa
-		
-		r = requests.get('{}/.git/HEAD'.format(webnya), verify=False, headers=kepala)
+		for yaa in file :
 
-		if r.status_code == 200 :
-			print('{}[INFO] {}{} {} -> GIT FOUND'.format(fc, fw, webnya, fg))
-		if 'refs/heads/master' in r.text :
-			print('{}[INFO] {}{} {} -> GIT FOUND'.format(fc, fw, webnya, fg))
-		else:
-			print('{}[INFO] {}{} {} -> NOT FOUND'.format(fc, fw, webnya, fr))
+			if '://' not in yaa :
+				webnya = 'http://' + yaa
+			else:
+				webnya = yaa
+			
+			r = requests.get('{}/.git/HEAD'.format(webnya), verify=False, headers=kepala)
+
+			if 'refs/heads/master' in r.text :
+				print('{}[INFO] {}{} {} -> GIT FOUND'.format(fc, fw, webnya, fg))
+			elif r.status_code == 200 :
+				print('{}[INFO] {}{} {} -> GIT FOUND'.format(fc, fw, webnya, fg))
+			else:
+				print('{}[INFO] {}{} {} -> NOT FOUND'.format(fc, fw, webnya, fr))
+
+	except Exception :
+		pass
+
 
 if __name__ == "__main__":
 	os.system('cls' if os.name == 'nt' else 'clear')
