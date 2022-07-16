@@ -1,3 +1,4 @@
+from concurrent.futures import thread
 from email import header
 import importlib
 import requests
@@ -5,6 +6,7 @@ requests.packages.urllib3.disable_warnings()
 import sys
 from colorama import Fore, Back, Style
 import os
+from multiprocessing.dummy import Pool
 
 fr  =   Fore.RED											
 fc  =   Fore.CYAN											
@@ -49,29 +51,22 @@ def banner():
                       
 	""")
 
-def scan():
-
-	list = sys.argv[1]
-
-	file = open(list, 'r', encoding="utf8").read().splitlines()
+def scan(web):
 
 	try:
 
-		for yaa in file :
+		if '://' not in web :
+			webnya = 'http://' + web
+		else:
+			webnya = web
+		
+		r = requests.get('{}/.git/HEAD'.format(webnya), verify=False, headers=kepala)
 
-			if '://' not in yaa :
-				webnya = 'http://' + yaa
-			else:
-				webnya = yaa
-			
-			r = requests.get('{}/.git/HEAD'.format(webnya), verify=False, headers=kepala)
-
-			if 'refs/heads/master' in r.text :
-				print('{}[INFO] {}{} {} -> GIT FOUND'.format(fc, fw, webnya, fg))
-			elif r.status_code == 200 :
-				print('{}[INFO] {}{} {} -> GIT FOUND'.format(fc, fw, webnya, fg))
-			else:
-				print('{}[INFO] {}{} {} -> NOT FOUND'.format(fc, fw, webnya, fr))
+		if 'refs/heads/' not in r.text :
+			print('{}[INFO] {}{} {} -> NOT FOUND'.format(fc, fw, webnya, fr))
+		else:
+			print('{}[INFO] {}{} {} -> GIT FOUND'.format(fc, fw, webnya, fg))
+			open('gitfound.txt', 'a').write(webnya+'\n')
 
 	except Exception :
 		pass
@@ -80,4 +75,11 @@ def scan():
 if __name__ == "__main__":
 	os.system('cls' if os.name == 'nt' else 'clear')
 	banner()
-	scan()
+
+	list = sys.argv[1]
+	threadnya = sys.argv[2]
+
+	file = open(list, 'r', encoding="utf8").read().splitlines()
+
+	p = Pool(int(threadnya))
+	p.map(scan, file)
